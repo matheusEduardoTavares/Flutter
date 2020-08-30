@@ -40,3 +40,6 @@ double calcAreaCirculo(double raio) {
 double calcAreaCirculo2 (double raio) => 3.14 * raio * raio;
 
 var tamanho = (int size) => size * 2;
+var tamanho2 = (int size) {
+  return size * 2;
+};
