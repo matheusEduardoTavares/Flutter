@@ -24,6 +24,7 @@ class _HomeState extends State<Home> {
     heightController.text = "";
     setState(() {
       _infoText = "Informe seus dados!";
+      _formKey = GlobalKey<FormState>();
     });
   }
 
@@ -82,9 +83,11 @@ class _HomeState extends State<Home> {
                     style: TextStyle(color: Colors.green, fontSize: 25.0),
                     controller: weightController,
                     validator: (value) {
+                      String res;
                       if (value.isEmpty) {
-                        return "Insira seu Peso!";
+                        res = "Insira seu Peso!";
                       }
+                      return res;
                     }
                   ),
                 TextFormField(
@@ -96,9 +99,11 @@ class _HomeState extends State<Home> {
                     style: TextStyle(color: Colors.green, fontSize: 25.0),
                     controller: heightController,
                     validator: (value) {
+                      String res;
                       if (value.isEmpty) {
-                        return "Insira sua Altura!";
+                        res = "Insira sua Altura!";
                       }
+                      return res;
                     }
                   ),
                     Padding(
