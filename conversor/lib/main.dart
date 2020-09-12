@@ -54,7 +54,56 @@ class _HomeState extends State<Home>{
       //com que seja mostrado "carregando dados"
       //E depois que os dados são carregados, 
       //como no caso do método getData.
-      body: Text("futureBuilder será implementado na próxima aula")
+      // O FutureBuilder precisa de um builder,
+      //O atributo future é o que ele deve esperar,
+      //Iremos mostrar carregando dados na tela.
+      //O atributo builder passamos para ele uma
+      //função anônima que tem 2 parâmetros: 
+      //o contexto e o snapshot que é uma cópia
+      //uma fotografia momentanea dos dados que
+      //virão do que está no future.
+      body: FutureBuilder<Map>(
+        future: getData(),
+        // Se o connectionState desse segundo
+        //parâmetro do builder estiver como
+        //none ou como waiting devemos mostrar
+        //o texto pois os dados ainda não 
+        //foram carregados. Do contrário já
+        //podemos trabalhar com esses dados 
+        //na tela.
+        builder: (context, snapshot) {
+          switch(snapshot.connectionState) {
+            case ConnectionState.none:
+              case ConnectionState.waiting:
+                return Center(
+                  child: Text("Carregando Dados...",
+                    style: TextStyle(
+                      color: Colors.amber,
+                      fontSize: 25.0
+                    ),
+                    textAlign: TextAlign.center
+                  )
+                );
+            default:
+              if (snapshot.hasError){
+                return Center(
+                  child: Text("Erro ao Carregar Dados :(",
+                    style: TextStyle(
+                      color: Colors.amber,
+                      fontSize: 25.0
+                    ),
+                    textAlign: TextAlign.center
+                  )
+                );
+              }
+              else {
+                return Container(
+                  color: Colors.green
+                );
+              }
+          }
+        }
+      )
     );
   }
 }
