@@ -26,7 +26,48 @@ class _HomeState extends State<Home> {
 
   @override 
   Widget build(BuildContext context) {
-    return Container();
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Lista de Tarefas!"),
+        backgroundColor: Colors.blueAccent,
+        centerTitle: true
+      ),
+      body: Column(
+        children: <Widget> [
+          Container(
+            padding: EdgeInsets.fromLTRB(17.0, 1.0, 7.0, 1.0),
+            child: Row(
+              children: <Widget> [
+                // Sem o expanded irá dar erro pois o 
+                //flutter não sabe qual é a largura que
+                //o TextField e que o RaisedButton devem
+                //ocupar na tela. Com o expanded, significa
+                //que quem está dentro dele, no caso o 
+                //TextField irá expandir o máximo que der
+                //de largura, e o botão irá ocupar o tamanho
+                //mínimo necessário, enquanto o TextField
+                //ocupará todo tamanho da largura que 
+                //restar.
+                Expanded(
+                  child: TextField(
+                    decoration: InputDecoration(
+                      labelText: "Nova Tarefa",
+                      labelStyle: TextStyle(color: Colors.blueAccent)
+                    )
+                  )
+                ),
+                RaisedButton(
+                  color: Colors.blueAccent,
+                  child: Text("ADD"),
+                  textColor: Colors.white,
+                  onPressed: () {}
+                )
+              ]
+            )
+          )
+        ]
+      )
+    );
   }
 
   //Função para salvar os dados:
