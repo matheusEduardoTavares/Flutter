@@ -22,7 +22,23 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   //lista para armazenar tarefas:
-  List _toDoList = ["Daniel", "Marcos", "svcdf", "svdfdb", "sgsbfdb"];
+  // List _toDoList = ["Daniel", "Marcos", "svcdf", "svdfdb", "sgsbfdb"];
+  final _toDoController = TextEditingController();
+  
+  List _toDoList = [];
+
+
+  void _addToDo() {
+    // Quando lidamos com JSON, normalmente usaremos um
+    //map de STRING e dynamic.
+    setState(() {
+      Map<String, dynamic> newToDo = Map();
+      newToDo['title'] = _toDoController.text;
+      _toDoController.text = "";
+      newToDo['ok'] = false;
+      _toDoList.add(newToDo);
+    });
+  }
 
   @override 
   Widget build(BuildContext context) {
@@ -53,14 +69,15 @@ class _HomeState extends State<Home> {
                     decoration: InputDecoration(
                       labelText: "Nova Tarefa",
                       labelStyle: TextStyle(color: Colors.blueAccent)
-                    )
+                    ),
+                    controller: _toDoController
                   )
                 ),
                 RaisedButton(
                   color: Colors.blueAccent,
                   child: Text("ADD"),
                   textColor: Colors.white,
-                  onPressed: () {}
+                  onPressed: _addToDo
                 )
               ]
             )
@@ -111,7 +128,12 @@ class _HomeState extends State<Home> {
                     child: Icon(_toDoList[index]['ok'] ?
                       Icons.check : Icons.error
                     )
-                  )
+                  ),
+                  onChanged: (c) {
+                    setState(() {
+                      _toDoList[index]['ok'] = c;
+                    });
+                  }
                 );
               }
             )
