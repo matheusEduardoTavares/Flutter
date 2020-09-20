@@ -22,7 +22,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   //lista para armazenar tarefas:
-  List _toDoList = [];
+  List _toDoList = ["Daniel", "Marcos", "svcdf", "svdfdb", "sgsbfdb"];
 
   @override 
   Widget build(BuildContext context) {
@@ -63,6 +63,57 @@ class _HomeState extends State<Home> {
                   onPressed: () {}
                 )
               ]
+            )
+          ),
+          Expanded(
+            //ListView é um widget que nós podemos
+            //fazer uma lista. O builder é um
+            //construtor que nos permite construir a
+            //lista conforme vamos rodando ela, ou seja,
+            //os elementos que estão escondidos em baixo
+            //da tela, que não estão aparecendo devido 
+            //ao scroll não são renderizados na tela e 
+            //não irão consumir recursos até o momento
+            //que efetivamente aparecerem na tela.
+            child: ListView.builder(
+              padding: EdgeInsets.only(top: 10.0),
+              // itemCount é a quantidade de itens que
+              //estarão dentro da lista.
+              itemCount: _toDoList.length,
+              //No itemBuilder colocamos os elementos da
+              //lista. Passamos para ela uma função que
+              //recebe o contexto e o índice de cada 
+              //elemento da lista. E nessa função
+              //é retornado o widget que queremos que
+              //apareça na tela. Iremos retornar um
+              //widget chamado ListTile que seria um 
+              //item específico da lista.
+              itemBuilder: (context, index) {
+                // return ListTile(
+                //   title: Text(_toDoList[index])
+                // );
+                //Como queremos fazer um todo list, onde o usuário
+                //marca se dada tarefa foi terminada ou não, é +
+                //interessante usarmos no lugar do ListTile o 
+                //widget CheckboxListTile que é específico para esse
+                //fim:
+                return CheckboxListTile(
+                  title: Text(_toDoList[index]['title']),
+                  //value é se o checkbox está ou não marcado
+                  value: _toDoList[index]['ok'],
+                  //secondary é um ícone que podemos por para ser 
+                  //mostrado antes do title. Podemos passar para
+                  //ele um CircleAvatar que é um widget em formato 
+                  //de círculo que dependendo se uma tarefa foi feita
+                  //estará com um ícone X e se não for feita um ícone
+                  //Y:
+                  secondary: CircleAvatar(
+                    child: Icon(_toDoList[index]['ok'] ?
+                      Icons.check : Icons.error
+                    )
+                  )
+                );
+              }
             )
           )
         ]
