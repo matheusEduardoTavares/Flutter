@@ -124,44 +124,103 @@ class _HomeState extends State<Home> {
               //apareça na tela. Iremos retornar um
               //widget chamado ListTile que seria um 
               //item específico da lista.
-              itemBuilder: (context, index) {
-                // return ListTile(
-                //   title: Text(_toDoList[index])
-                // );
-                //Como queremos fazer um todo list, onde o usuário
-                //marca se dada tarefa foi terminada ou não, é +
-                //interessante usarmos no lugar do ListTile o 
-                //widget CheckboxListTile que é específico para esse
-                //fim:
-                return CheckboxListTile(
-                  title: Text(_toDoList[index]['title']),
-                  //value é se o checkbox está ou não marcado
-                  value: _toDoList[index]['ok'],
-                  //secondary é um ícone que podemos por para ser 
-                  //mostrado antes do title. Podemos passar para
-                  //ele um CircleAvatar que é um widget em formato 
-                  //de círculo que dependendo se uma tarefa foi feita
-                  //estará com um ícone X e se não for feita um ícone
-                  //Y:
-                  secondary: CircleAvatar(
-                    child: Icon(_toDoList[index]['ok'] ?
-                      Icons.check : Icons.error
-                    )
-                  ),
-                  onChanged: (c) {
-                    setState(() {
-                      _toDoList[index]['ok'] = c;
-                      _saveData();
-                    });
-                  }
-                );
-              }
+              itemBuilder: buildItem
             )
           )
         ]
       )
     );
   }
+
+  Widget buildItem(context, index) {
+    //Dismissible é um widget que permite que o 
+    //usuário o arraste, e é o item que precisamos para
+    //fazer com que o usuário possa arrastar cada item
+    //de forma a deletá-lo.
+    return Dismissible(
+      // Como nossa lista terá vários elementos, é preciso
+      //passar uma key, um identificador de cada elemento.
+      //No caso passaremos para pegar os milisegundos do 
+      //momento em que ocorre a gravação.
+      key: Key(DateTime.now().millisecondsSinceEpoch.toString()),
+      // Background é a cor e o widget que será mostrado
+      //enquanto o item vai sendo arrastado.
+      background: Container(
+        color: Colors.red,
+        // E queremos que no lugar do ícone do secundary
+        //apareça um ícone de lixeira mostrando que o
+        //item será deletado, então iremos adicionar como
+        //child um align para que dentro dele tenha o ícone
+        //da lixeira, alinhado a esquerda.
+        child: Align(
+          //Para o alignment passamos 2 parâmetros: a
+          //distância para esquerda e para direita que o
+          //item irá ficar. A distância vai de -1 a 1 em X
+          //e o mesmo em Y.
+          alignment: Alignment(-0.9, 0.0),
+          child: Icon(Icons.delete, color: Colors.white)
+        )
+      ),
+      //Direção que iremos dar o dismissible, queremos da
+      //esquerda para direita, então startToEnd
+      direction: DismissDirection.startToEnd,
+      child: CheckboxListTile(
+        title: Text(_toDoList[index]['title']),
+        //value é se o checkbox está ou não marcado
+        value: _toDoList[index]['ok'],
+        //secondary é um ícone que podemos por para ser 
+        //mostrado antes do title. Podemos passar para
+        //ele um CircleAvatar que é um widget em formato 
+        //de círculo que dependendo se uma tarefa foi feita
+        //estará com um ícone X e se não for feita um ícone
+        //Y:
+        secondary: CircleAvatar(
+          child: Icon(_toDoList[index]['ok'] ?
+            Icons.check : Icons.error
+          )
+        ),
+        onChanged: (c) {
+          setState(() {
+            _toDoList[index]['ok'] = c;
+            _saveData();
+          });
+        }
+      )
+    );
+  }
+
+/*
+    // return ListTile(
+    //   title: Text(_toDoList[index])
+    // );
+    //Como queremos fazer um todo list, onde o usuário
+    //marca se dada tarefa foi terminada ou não, é +
+    //interessante usarmos no lugar do ListTile o 
+    //widget CheckboxListTile que é específico para esse
+    //fim:
+    return CheckboxListTile(
+      title: Text(_toDoList[index]['title']),
+      //value é se o checkbox está ou não marcado
+      value: _toDoList[index]['ok'],
+      //secondary é um ícone que podemos por para ser 
+      //mostrado antes do title. Podemos passar para
+      //ele um CircleAvatar que é um widget em formato 
+      //de círculo que dependendo se uma tarefa foi feita
+      //estará com um ícone X e se não for feita um ícone
+      //Y:
+      secondary: CircleAvatar(
+        child: Icon(_toDoList[index]['ok'] ?
+          Icons.check : Icons.error
+        )
+      ),
+      onChanged: (c) {
+        setState(() {
+          _toDoList[index]['ok'] = c;
+          _saveData();
+        });
+      }
+    );
+*/
 
   //Função para salvar os dados:
   Future<File> _saveData() async {
