@@ -21,6 +21,24 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  //Iremos sobrescrever um método que é chamado sempre
+  //quando inicializamos o estado da nossa tela, do nosso
+  //widget:
+  @override 
+  void initState() {
+    //Primeiro devemos inicializar o estado da superclasse:
+    super.initState();
+
+    //Agora iremos ler os dados do nosso arquivo data.json
+    //para carregar a todo list sempre que o app for 
+    //aberto. Mas sabemos que o readData é assíncrono
+    _readData().then((data) {
+      setState(() {
+        _toDoList = json.decode(data);
+      });
+    });
+  }
+
   //lista para armazenar tarefas:
   // List _toDoList = ["Daniel", "Marcos", "svcdf", "svdfdb", "sgsbfdb"];
   final _toDoController = TextEditingController();
@@ -37,6 +55,7 @@ class _HomeState extends State<Home> {
       _toDoController.text = "";
       newToDo['ok'] = false;
       _toDoList.add(newToDo);
+      _saveData();
     });
   }
 
@@ -132,6 +151,7 @@ class _HomeState extends State<Home> {
                   onChanged: (c) {
                     setState(() {
                       _toDoList[index]['ok'] = c;
+                      _saveData();
                     });
                   }
                 );
