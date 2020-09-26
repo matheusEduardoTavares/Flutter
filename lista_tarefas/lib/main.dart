@@ -67,6 +67,35 @@ class _HomeState extends State<Home> {
     });
   }
 
+  Future<Null> _refresh() async {
+    // Essa função irá esperar 1 segundo para somente após 
+    //executar
+    await Future.delayed(Duration(seconds: 1));
+
+    setState(() {
+      //A ordenação será feita com o método sort do dart em que
+      //passamos uma função de comparação como parâmetro. Essa 
+      //função precisa de 2 argumentos.
+      _toDoList.sort((a, b) {
+        // Se a > b precisamos retornar 1. Se a = b 
+        //retornamos 0 e se a < que b retornamos -1. Essa função
+        //será chamada o tempo todo passando 2 itens para informar
+        //qual deles é maior. Logo os itens não concluídos devem
+        //ser maior que os concluídos:
+        if (a['ok'] && !b['ok']) return 1;
+        else if (!a['ok'] && b['ok']) return -1;
+        else return 0;
+        //Se o elemento "a" for true e o "b" não, retornamos 1, o qual manda o "a" para o final da lista;
+        //Se o elemento "a" for false e o "b" não, retornamos -1, o qual manda o "a" para o começo da lista;
+        //Se ambos forem igual retornamos 0 para indicar que não há relevância.
+      });
+      
+      _saveData();
+    });
+
+    return null;
+  }
+
   @override 
   Widget build(BuildContext context) {
     return Scaffold(
@@ -119,20 +148,28 @@ class _HomeState extends State<Home> {
             //ao scroll não são renderizados na tela e 
             //não irão consumir recursos até o momento
             //que efetivamente aparecerem na tela.
-            child: ListView.builder(
-              padding: EdgeInsets.only(top: 10.0),
-              // itemCount é a quantidade de itens que
-              //estarão dentro da lista.
-              itemCount: _toDoList.length,
-              //No itemBuilder colocamos os elementos da
-              //lista. Passamos para ela uma função que
-              //recebe o contexto e o índice de cada 
-              //elemento da lista. E nessa função
-              //é retornado o widget que queremos que
-              //apareça na tela. Iremos retornar um
-              //widget chamado ListTile que seria um 
-              //item específico da lista.
-              itemBuilder: buildItem
+            // Por fim queremos fazer o efeito de quando arrastarmos a lista
+            //das tarefas para baixo ela colocar em ordem a lista: primeiro
+            //os não concluídos e deixar os concluídos pro fim.
+            //Para fazer isso iremos por o ListView.builder
+            //como filho do widget RefreshIndicator.
+            child: RefreshIndicator(
+              onRefresh: _refresh,
+              child: ListView.builder(
+                padding: EdgeInsets.only(top: 10.0),
+                // itemCount é a quantidade de itens que
+                //estarão dentro da lista.
+                itemCount: _toDoList.length,
+                //No itemBuilder colocamos os elementos da
+                //lista. Passamos para ela uma função que
+                //recebe o contexto e o índice de cada 
+                //elemento da lista. E nessa função
+                //é retornado o widget que queremos que
+                //apareça na tela. Iremos retornar um
+                //widget chamado ListTile que seria um 
+                //item específico da lista.
+                itemBuilder: buildItem
+              ),
             )
           )
         ]
