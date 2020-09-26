@@ -43,8 +43,16 @@ class _HomeState extends State<Home> {
   // List _toDoList = ["Daniel", "Marcos", "svcdf", "svdfdb", "sgsbfdb"];
   final _toDoController = TextEditingController();
   
+  //Além de removermos o item, queremos que apareça uma 
+  //snackbar abaixo em que há uma opção para desfazer, e o item
+  //que fora deletado anteriormente volta a aparecer.
   List _toDoList = [];
-
+  //Então faremos um map para o último item removido:
+  Map<String, dynamic> _lastRemoved;
+  // Posição do último item que foi removido, pois o item que
+  //foi deletado irá voltar para a posição que estava caso o
+  //usuário clique em desfazer.
+  int _lastRemovedPos;
 
   void _addToDo() {
     // Quando lidamos com JSON, normalmente usaremos um
@@ -132,7 +140,11 @@ class _HomeState extends State<Home> {
     );
   }
 
-  Widget buildItem(context, index) {
+  //Não precisamos definir os tipos dos parâmetros context e
+  //index pois estão sendo chamados pelo método build que está
+  //também dentro da mesma classe. Mas podemos definí-los se 
+  //quisermos também:
+  Widget buildItem(BuildContext context, int index) {
     //Dismissible é um widget que permite que o 
     //usuário o arraste, e é o item que precisamos para
     //fazer com que o usuário possa arrastar cada item
@@ -185,7 +197,35 @@ class _HomeState extends State<Home> {
             _saveData();
           });
         }
-      )
+      ),
+      // Sempre que arrastarmos um item será chamado a função
+      //onDismissed, que requer 1 parâmetro: a direção, que nesse
+      //caso será sempre startToEnd.
+      onDismissed: (direction) {
+        setState(() {
+          _lastRemoved = Map.from(_toDoList[index]);
+          _lastRemovedPos = index;
+          _toDoList.removeAt(index);
+          
+          _saveData();
+
+          final snack = SnackBar(
+            content: Text("Tarefa \"${_lastRemoved['title']}\" removida!"),
+            action: SnackBarAction(label: "Desfazer", 
+              onPressed: () {
+                setState(() {
+                  _toDoList.insert(_lastRemovedPos, _lastRemoved);
+                  _saveData();
+                });
+              }
+            ),
+            duration: Duration(seconds: 2)
+          );
+
+          Scaffold.of(context).showSnackBar(snack);
+
+        });
+      }
     );
   }
 
