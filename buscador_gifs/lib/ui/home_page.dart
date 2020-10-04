@@ -18,7 +18,7 @@ class _HomePageState extends State<HomePage> {
     if(_search == null)
       response = await http.get("https://api.giphy.com/v1/gifs/trending?api_key=NqbVHGIPsevR7aNbRB89SAsjxznqVvp8&limit=20&rating=g");
     else 
-      response = await http.get("https://api.giphy.com/v1/gifs/search?api_key=NqbVHGIPsevR7aNbRB89SAsjxznqVvp8&q=$_search&limit=20&offset=$_offset&rating=g&lang=en");
+      response = await http.get("https://api.giphy.com/v1/gifs/search?api_key=NqbVHGIPsevR7aNbRB89SAsjxznqVvp8&q=$_search&limit=19&offset=$_offset&rating=g&lang=en");
 
     return json.decode(response.body);
   }
@@ -58,7 +58,28 @@ class _HomePageState extends State<HomePage> {
                 color: Colors.white,
                 fontSize: 18.0
               ),
-              textAlign: TextAlign.center
+              textAlign: TextAlign.center,
+              //O onSubmitted é chamado quando o usuário clica
+              //no botão de enviar do teclado, demonstrando que
+              //o texto já terminou de ser digitado e já pode 
+              //ser envido. Seu parâmetro é o texto digitado 
+              //no campo antes de clicar para confirmar.
+              onSubmitted: (text) {
+                //Devido ao setState, o FutureBuilder será 
+                //renderizado novamente e assim conseguimos 
+                //atualizar a lista.
+                setState(() {
+                  _search = text;
+                  //Aqui devemos resetar o offset se não ele 
+                  //não irá mostrar os primeiros itens, pois 
+                  //caso pesquisamos uma coisa e depois vamos 
+                  //pesquisar outra, será considerado aquele 
+                  //offset que estava antes e que pode ter sido
+                  //alterado caso o usuário clicou para carregar
+                  //mais.
+                  _offset = 0;
+                });
+              },
             ),
           ),
           Expanded(
@@ -95,6 +116,15 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  int _getCount(List data){
+    if (_search == null) {
+      return data.length;
+    }
+    else {
+      return data.length + 1;
+    }
+  }
+
   Widget _createGifTable(BuildContext context, AsyncSnapshot snapshot) {
     return GridView.builder(
       padding: EdgeInsets.all(10.0),
@@ -108,7 +138,7 @@ class _HomePageState extends State<HomePage> {
         mainAxisSpacing: 10.0
       ),
       //Quantidade de itens:
-      itemCount: snapshot.data["data"].length,
+      itemCount: _getCount(snapshot.data["data"]),
       itemBuilder: (context, index) {
         // Aqui iremos retornar uma imagem 
         //sendo que cada widget que é retornado
@@ -116,13 +146,41 @@ class _HomePageState extends State<HomePage> {
         //Mas retornaremos um GestureDetector para
         //ser possível detectar quando o usuário
         //clica na imagem.
-        return GestureDetector(
-          child: Image.network(
-            snapshot.data["data"][index]["images"]["fixed_height"]["url"],
-            height: 300.0,
-            fit: BoxFit.cover
-          ),
-        );
+        //Se não estivermos pesquisando ou se estivermos pesquisando
+        //mas o item a ser mostrado não é o último item simplesmente
+        //retornamos a imagem do gif. Se for uma pesquisa e for o último
+        //item, queremos por um botão para o usuário pesquisar mais,
+        //mudando a paginação, por isso nesse caso temos que retornar
+        //um ícone para carregar mais, e não uma imagem.
+        if (_search == null || index < snapshot.data["data"].length)
+          return GestureDetector(
+            child: Image.network(
+              snapshot.data["data"][index]["images"]["fixed_height"]["url"],
+              height: 300.0,
+              fit: BoxFit.cover
+            ),
+          );
+        else 
+          return Container(
+            child: GestureDetector(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Icon(Icons.add, color: Colors.white, size: 70.0),
+                  Text("Carregar mais...", 
+                    style: TextStyle(color: Colors.white, fontSize: 22.0)
+                  )
+                ],
+              ),
+              onTap: () {
+                setState(() {
+                  //Aqui pegamos + 19 itens e com o setState o Future
+                  //Builder é renderizado novamente.
+                  _offset += 19;
+                });
+              },
+            )
+          );
       }
     );
   }
