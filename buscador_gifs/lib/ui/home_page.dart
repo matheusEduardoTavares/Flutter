@@ -96,6 +96,34 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _createGifTable(BuildContext context, AsyncSnapshot snapshot) {
-
+    return GridView.builder(
+      padding: EdgeInsets.all(10.0),
+      // O gridDelegate mostra como os itens 
+      //serão organizados na nossa tela.
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        //Quantos itens tem no eixo X:
+        crossAxisCount: 2,
+        //Espaçamento no eixo X:
+        crossAxisSpacing: 10.0,
+        mainAxisSpacing: 10.0
+      ),
+      //Quantidade de itens:
+      itemCount: snapshot.data["data"].length,
+      itemBuilder: (context, index) {
+        // Aqui iremos retornar uma imagem 
+        //sendo que cada widget que é retornado
+        //aqui será usado por um índice dos itens.
+        //Mas retornaremos um GestureDetector para
+        //ser possível detectar quando o usuário
+        //clica na imagem.
+        return GestureDetector(
+          child: Image.network(
+            snapshot.data["data"][index]["images"]["fixed_height"]["url"],
+            height: 300.0,
+            fit: BoxFit.cover
+          ),
+        );
+      }
+    );
   }
 }
