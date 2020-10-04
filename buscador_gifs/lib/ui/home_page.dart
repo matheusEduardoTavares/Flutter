@@ -4,6 +4,7 @@ import 'package:buscador_gifs/ui/gif_page.dart';
 import 'dart:convert';
 
 import 'package:share/share.dart';
+import 'package:transparent_image/transparent_image.dart';
 
 class HomePage extends StatefulWidget {
   @override 
@@ -157,10 +158,28 @@ class _HomePageState extends State<HomePage> {
         //um ícone para carregar mais, e não uma imagem.
         if (_search == null || index < snapshot.data["data"].length)
           return GestureDetector(
-            child: Image.network(
-              snapshot.data["data"][index]["images"]["fixed_height"]["url"],
+            //Até então as imagens estavam sendo carregadas de
+            //forma muito abrupta pelo Image.network. Agora
+            //queremos fazer elas carregarem de uma forma
+            //mais suave, dando um efeito de fade nelas.
+            //Para isso usaremos o FadeInImage.memoryNetwork,
+            //passando como seus atributos qual é a image,
+            //uma altura, um fit e um placeholder. O 
+            //placeholder é uma imagem que irá ficar no 
+            //local da imagem real enquanto a mesma ainda
+            //não é carregada. Para tal iremos usar uma 
+            //imagem transparente, e mesmo que não tenhamos
+            //uma imagem transparente em flutter, há um 
+            //plugin que serve apenas para ter uma imagem
+            //transparente. Adicionaremos no pubspec o plugin
+            //transparent_image, assim como foi com o 
+            //share na aula passada.
+            // Esse plugin contém apenas uma imagem transparente.
+            child: FadeInImage.memoryNetwork(
+              image: snapshot.data["data"][index]["images"]["fixed_height"]["url"],
               height: 300.0,
-              fit: BoxFit.cover
+              fit: BoxFit.cover,
+              placeholder: kTransparentImage
             ),
             onTap: () {
               //Para trocar de tela no flutter é só chamar o
