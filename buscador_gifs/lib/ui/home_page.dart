@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:buscador_gifs/ui/gif_page.dart';
 import 'dart:convert';
 
 class HomePage extends StatefulWidget {
@@ -159,6 +160,28 @@ class _HomePageState extends State<HomePage> {
               height: 300.0,
               fit: BoxFit.cover
             ),
+            onTap: () {
+              //Para trocar de tela no flutter é só chamar o
+              //método push do Navigator, passando o contexto
+              //e a rota. A rota nada mais é que uma ponte, um
+              //caminho entre as 2 telas, então temos que 
+              //definir um caminho da tela principal para a 
+              //próxima tela. O MaterialPageRoute nos permite
+              //definir esse caminho passando para seu atributo
+              //builder uma função anônima que recebe o parâmetro
+              //context e que retorna a nova tela, no caso a 
+              //GifPage. Com isso temos essa página que é a principal
+              //e agora uma rota para outra página, a do gif específico
+              //que é a tela correspondente a rota que colocamos.
+              //Dessa forma que fizemos o próprio flutter já coloca
+              //um botão para voltar, ou seja, a ação de voltar para
+              //a tela anterior o próprio flutter faz isso para nós.
+              Navigator.push(context, 
+                MaterialPageRoute(
+                  builder: (context) => GifPage(snapshot.data["data"][index])
+                )
+              );
+            }
           );
         else 
           return Container(
