@@ -60,9 +60,42 @@ class _HomePageState extends State<HomePage> {
               ),
               textAlign: TextAlign.center
             ),
+          ),
+          Expanded(
+            child: FutureBuilder(
+              future: _getGifs(),
+              builder: (context, snapshot) {
+                switch (snapshot.connectionState) {
+                  case ConnectionState.waiting:
+                  case ConnectionState.none:
+                    return Container(
+                      width: 200.0,
+                      height: 200.0,
+                      alignment: Alignment.center,
+                      child: CircularProgressIndicator(
+                        // O AlwaysStoppedAnimation irá indicar que 
+                        //estamos colocando uma cor no indicator e que
+                        //essa cor não irá mudar, ou seja, a cor não
+                        //vai mudar, a animação vai estar parada, sendo
+                        //do tipo Color com cor branca.
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                        //Largura do círculo que ficará girando:
+                        strokeWidth: 5.0
+                      )
+                    );
+                  default:
+                    if (snapshot.hasError) return Container();
+                    else _createGifTable(context, snapshot);
+                }
+              }
+            ),
           )
         ],
       )
     );
+  }
+
+  Widget _createGifTable(BuildContext context, AsyncSnapshot snapshot) {
+    
   }
 }
