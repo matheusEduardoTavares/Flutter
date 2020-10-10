@@ -3,7 +3,10 @@
 //então no pubspec essa dependência e aqui
 //a importamos.
 import 'package:sqflite/sqflite.dart';
+import 'package:path/path.dart';
 
+//Nome da tabela:
+final String contactTable = "contactTable";
 //Precisamos do nome dos campos no banco de 
 //dados para usar tanto na classe Contact
 //quanto na ContactHelper, então o definiremos
@@ -16,7 +19,82 @@ final String emailColumn = "emailColumn";
 final String phoneColumn = "phoneColumn";
 final String imgColumn = "imgColumn";
 
+//Essa classe ContactHelper irá conter apenas
+//um objeto no código inteiro, ou seja, é 
+//uma classe que não poderá ter várias 
+//instâncias ao longo do seu código e por
+//isso nós iremos utilizar um padrão
+//chamado Singleton. É um padrão muito
+//interessante quando queremos ter apenas
+//um objeto de uma dada classe. 
 class ContactHelper {
+
+  //Aqui instanciamos um objeto da
+  //classe ContactHelper com o construtor 
+  //internal dessa classe. Essa instância
+  //será estática e final.
+  static final ContactHelper _instance = ContactHelper.internal();
+
+  //Quando declaramos a classe ContactHelper
+  //criamos um objeto dela mesmo, o _instance,
+  //que chama um construtor interno, ou seja
+  //é um construtor que só pode ser chamado 
+  //de dentro da classe e de mais nenhum lugar.
+  //Para acessar essa instância de qualquer local
+  //do código é só fazer: ContactHelper._instance e
+  //acessamos essa instância. O factory nos 
+  //permite retornar um objeto já existente,
+  //de forma que não precisa criar um novo
+  //objeto sempre.
+  factory ContactHelper() => _instance;
+
+  ContactHelper.internal();
+
+  //Agora vamos declarar uma variável privada
+  //do tipo Database de forma que queremos mostrar
+  //que apenas o ContactHelper poderá acessar essa
+  //variável de banco de dados.
+  Database _db;
+
+  Future<Database> get db async {
+    if (_db != null) {
+      return _db;
+    }
+    else {
+      _db = await initDb();
+      return _db;
+    }
+  }
+
+  Future<Database> initDb() async {
+    //Primeiro pegamos o local onde é armazenado o 
+    //banco de dados
+    final databasesPath = await getDatabasesPath();
+    //Agora pegamos o caminho para o banco de dados
+    //e juntamos com o nme do banco, e estamos
+    //retornando o caminho disso. Para usar o 
+    //método join precisamos importar o package
+    //path do dart que já vem por default, então
+    //não precisamos colocar nenhuma dependência
+    //no pubspec.
+    final path = join(databasesPath, "contacts.db");
+
+    //Agora abrimos o banco de dados passando primeiro
+    //o path, depois a versão do banco de dados, e 
+    //uma função responsável por criar o banco de dados
+    //na primeira vez que o abrirmos. Essa função
+    //recebe 2 parâmetros: o banco de dados, e a nova
+    //versão dele.
+    return await openDatabase(path, version: 1, onCreate: (Database db, int newerVersion) async {
+      //Aqui executamos o código responsável por criar
+      //a tabela no banco de dados. Aqui executamos
+      //SQL.
+      await db.execute(
+        "CREATE TABLE $contactTable($idColumn INTEGER PRIMARY KEY, $nameColumn TEXT, $emailColumn TEXT"
+        + "$phoneColumn TEXT, $imgColumn TEXT)"
+      );
+    });
+  }
 
 }
 
