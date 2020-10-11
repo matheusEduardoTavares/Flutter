@@ -4,7 +4,8 @@ import 'package:agenda_contatos/ui/home_page.dart';
 void main(){
   runApp(MaterialApp(
     title: 'Agenda de contatos',
-    home: HomePage()
+    home: HomePage(),
+    debugShowCheckedModeBanner: false
   ));
 }
 
