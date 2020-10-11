@@ -136,6 +136,44 @@ class ContactHelper {
     }
   }
 
+  Future<int> deleteContact(int id) async {
+    Database dbContact = await db;
+    //O delete retorna um número inteiro indicando se
+    //a deleção foi realizada com sucesso ou não.
+    return await dbContact.delete(contactTable, where: "$idColumn = ?", whereArgs: [id]);
+  }
+
+  Future<int> updateContact(Contact contact) async {
+    Database dbContact = await db;
+    //Também retorna um inteiro que demonstra sucesso
+    //ou não na operação.
+    return await dbContact.update(contactTable, contact.toMap(), where: '$idColumn = ?', whereArgs: [contact.id]);
+  }
+
+  Future<List> getAllContacts() async {
+    Database dbContact = await db;
+    List listMap = await dbContact.rawQuery("SELECT * FROM $contactTable");
+    //Se não especificarmos que queremos uma lista do
+    //tipo Contact ele seta como padrão dynamic, e é
+    //interessante deixarmos tipado para prevenir erros
+    List<Contact> listContact = List();
+    for (Map m in listMap) {
+      listContact.add(Contact.fromMap(m));
+    }
+    return listContact;
+  }
+
+  Future<int> getNumber() async {
+    Database dbContact = await db;
+    return Sqflite.firstIntValue(await dbContact.rawQuery("SELECT COUNT(*) FROM $contactTable"));
+  }
+
+  //Função para fechar o banco de dados
+  Future close() async {
+    Database dbContact = await db;
+    dbContact.close();
+  }
+
 }
 
 // Tabela:
