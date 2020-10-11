@@ -89,7 +89,7 @@ class ContactHelper {
     //path do dart que já vem por default, então
     //não precisamos colocar nenhuma dependência
     //no pubspec.
-    final path = join(databasesPath, "contacts.db");
+    final path = join(databasesPath, "contactsnew.db");
 
     //Agora abrimos o banco de dados passando primeiro
     //o path, depois a versão do banco de dados, e 
@@ -102,7 +102,7 @@ class ContactHelper {
       //a tabela no banco de dados. Aqui executamos
       //SQL.
       await db.execute(
-        "CREATE TABLE $contactTable($idColumn INTEGER PRIMARY KEY, $nameColumn TEXT, $emailColumn TEXT"
+        "CREATE TABLE $contactTable($idColumn INTEGER PRIMARY KEY, $nameColumn TEXT, $emailColumn TEXT,"
         + "$phoneColumn TEXT, $imgColumn TEXT)"
       );
     });
@@ -192,6 +192,8 @@ class Contact {
   //imagem no banco de dados então 
   //armazenaremos o local que a imagem foi
   //armazenada em nosso dispositivo.
+
+  Contact();
 
   //Construtor:
   //Esse construtor pega o map e constrói um
