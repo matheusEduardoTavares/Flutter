@@ -66,6 +66,18 @@ class ContactHelper {
     }
   }
 
+  Future<Contact> saveContact(Contact contact) async {
+    //Primeiro acessamos o banco de dados
+    Database dbContact = await db;
+    //Agora inserimos nessa tabela o contato
+    //que queremos, mas primeiro temos que o 
+    //transformar em um mapa. Depois de salvar
+    //o contato é retornado o ID que foi salvo 
+    //o usuário.
+    contact.id = await dbContact.insert(contactTable, contact.toMap());
+    return contact;
+  }
+
   Future<Database> initDb() async {
     //Primeiro pegamos o local onde é armazenado o 
     //banco de dados
@@ -94,6 +106,34 @@ class ContactHelper {
         + "$phoneColumn TEXT, $imgColumn TEXT)"
       );
     });
+  }
+
+  Future<Contact> getContact(int id) async {
+    Database dbContact = await db;
+    //agora dessa vez fazemos uma query, 
+    //uma consulta ao banco para obtermos os 
+    //dados. Passamos de que tabela queremos 
+    //filtrar, passamos os campos que queremos, e 
+    //no where colocamos a condição, e o valor que 
+    //será testado na condição colocamos um ? que 
+    //será o valor pego no whereArgs.
+    List<Map> maps = await dbContact.query(contactTable, 
+      columns: [idColumn, nameColumn, emailColumn, phoneColumn, imgColumn],
+      where: "$idColumn = ?",
+      whereArgs: [id]
+    );
+
+    //Verificamos se há um contato com aquele id, e se
+    //houver retornamos o map dele mas apenas do first
+    //pois estamos filtrando o contato por um ID 
+    //específico. Se não encontrar um contato retornamos
+    //null.
+    if (maps.length > 0) {
+      return Contact.fromMap(maps.first);
+    }
+    else {
+      return null;
+    }
   }
 
 }
