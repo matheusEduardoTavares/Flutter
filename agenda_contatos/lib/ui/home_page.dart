@@ -102,7 +102,7 @@ class _HomePageState extends State<HomePage> {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   image: DecorationImage(
-                    image: contacts[index].img != null ? 
+                    image: contacts[index].img != null &&  FileSystemEntity.typeSync(contacts[index].img) != FileSystemEntityType.notFound ? 
                       FileImage(File(contacts[index].img)) :
                         AssetImage("images/person.png")
                   )
