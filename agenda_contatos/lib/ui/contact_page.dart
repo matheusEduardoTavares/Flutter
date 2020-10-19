@@ -25,6 +25,9 @@ class _ContactPageState extends State<ContactPage> {
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _phoneController = TextEditingController();
+  
+  //Estamos criando um foco
+  final _nameFocus = FocusNode();
 
   bool _userEdited = false;
 
@@ -60,7 +63,22 @@ class _ContactPageState extends State<ContactPage> {
         centerTitle: true,
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          if (_editedContact.name != null && _editedContact.name.isNotEmpty) {
+            //Será removido a tela e irá voltar para a
+            //tela anterior. O Navigator funciona com 
+            //esquema de pilha. No pop passamos o 
+            //context e o segundo parâmetro é o que 
+            //queremos retornar no local que chamar essa
+            //rota, no caso, retornaremos o usuário.
+            Navigator.pop(context, _editedContact);
+          }
+          else {
+            //Aqui requisitamos que o foco passe a ser o 
+            //text field do nome
+            FocusScope.of(context).requestFocus(_nameFocus);
+          }
+        },
         child: Icon(Icons.save),
         backgroundColor: Colors.red,
       ),
@@ -84,6 +102,7 @@ class _ContactPageState extends State<ContactPage> {
             ),
             TextField(
               controller: _nameController,
+              focusNode: _nameFocus,
               decoration: InputDecoration(
                 labelText: "Nome"
               ),
