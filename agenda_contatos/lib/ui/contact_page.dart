@@ -98,7 +98,8 @@ class _ContactPageState extends State<ContactPage> {
                     image: DecorationImage(
                       image: _editedContact.img != null && FileSystemEntity.typeSync(_editedContact.img) != FileSystemEntityType.notFound ?
                       FileImage(File(_editedContact.img)) :
-                      AssetImage("images/person.png")
+                      AssetImage("images/person.png"),
+                      fit: BoxFit.cover
                     )
                   )
                 ),

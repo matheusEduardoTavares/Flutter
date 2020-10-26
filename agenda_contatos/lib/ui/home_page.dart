@@ -123,7 +123,8 @@ class _HomePageState extends State<HomePage> {
                   image: DecorationImage(
                     image: contacts[index].img != null &&  FileSystemEntity.typeSync(contacts[index].img) != FileSystemEntityType.notFound ? 
                       FileImage(File(contacts[index].img)) :
-                        AssetImage("images/person.png")
+                      AssetImage("images/person.png"),
+                    fit: BoxFit.cover
                   )
                 )
               ),
