@@ -5,6 +5,9 @@ import 'dart:io';
 
 import 'contact_page.dart';
 
+//Criaremos um enumerador. É um conjunto de constantes.
+enum OrderOptions {orderaz, orderza}
+
 class HomePage extends StatefulWidget {
   @override 
   _HomePageState createState() => _HomePageState();
@@ -62,7 +65,22 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: Text("Contatos"),
         backgroundColor: Colors.red,
-        centerTitle: true
+        centerTitle: true,
+        actions: <Widget>[
+          PopupMenuButton<OrderOptions>(
+            itemBuilder: (context) => <PopupMenuEntry<OrderOptions>>[
+              const PopupMenuItem<OrderOptions>(
+                child: Text('Ordenar de A-Z'),
+                value: OrderOptions.orderaz
+              ),
+              const PopupMenuItem<OrderOptions>(
+                child: Text('Ordenar de Z-A'),
+                value: OrderOptions.orderza
+              ), 
+            ],
+            onSelected: _orderList
+          )
+        ],
       ),
       backgroundColor: Colors.white,
       floatingActionButton: FloatingActionButton(
@@ -241,5 +259,26 @@ class _HomePageState extends State<HomePage> {
           contacts = list;
         });
       });
+  }
+
+  void _orderList(OrderOptions result) {
+    switch(result) {
+      case OrderOptions.orderaz:
+        contacts.sort((a, b) {
+          //Comparamos o nome dos 2 contatos, passando como 
+          //lower case para que as letras maiúsculas ou minúsculas
+          //não interfiram
+          return a.name.toLowerCase().compareTo(b.name.toLowerCase());
+        });
+        break;
+      case OrderOptions.orderza:
+        contacts.sort((a, b) {
+          return b.name.toLowerCase().compareTo(a.name.toLowerCase());
+        });
+        break;
+    }
+    //Depois de ordenarmos a lista só precisamos atualizar o 
+    //estado da aplicação, então colocamos um setState vazio.
+    setState(() {});
   }
 }
