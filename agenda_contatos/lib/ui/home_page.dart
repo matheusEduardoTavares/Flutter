@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:agenda_contatos/helpers/contact_helper.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'dart:io';
 
 import 'contact_page.dart';
@@ -155,7 +156,17 @@ class _HomePageState extends State<HomePage> {
                         style: TextStyle(color: Colors.red, fontSize: 20.0),
                       ),
                       onPressed: () {
-                        
+                        //Para fazermos a opção de ligar para um
+                        //contato chamamos a função launch do 
+                        //pacote url_launcher e passamos uma 
+                        //string, colocando tel: pois usaremos 
+                        //um serviço do telefone, daí passamos o
+                        //número que queremos ligar e será aberto
+                        //o telefone automaticamente com o número
+                        //que queremos ligar pronto para apertar
+                        //o verde e efeturar a ligação
+                        launch('tel:${contacts[index].phone}');
+                        Navigator.pop(context);
                       },
                     ),
                   ),
